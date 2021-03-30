@@ -30,6 +30,10 @@ REBOOT = '\x12'
 GET_CALLSIGN = '\x19'
 SET_CALLSIGN = '\x1a'
 CALLSIGN = '\x1b'
+SET_LED = '\x1c'
+CLEAR_LED = '\x1d'
+SET_LED_FORWARD = '\x1e'
+CLEAR_LED_FORWARD = '\x1f'
 GET_TELEM = '\x17'
 TELEM = '\x18'
 GET_TIME = '\x13'
@@ -271,6 +275,10 @@ COMMANDS = [
             StringArgument("callsign")),
     Command("callsign", CALLSIGN,
             StringArgument("callsign")),
+    Command("set_led", SET_LED),
+    Command("clear_led", CLEAR_LED),
+    Command("set_led_forward", SET_LED_FORWARD, UInt8Argument("hwid")),
+    Command("clear_led_forward", CLEAR_LED_FORWARD, UInt8Argument("hwid")),
     Command("get_telem", GET_TELEM),
     Command("telem", TELEM,
             UInt8Argument("reserved"),

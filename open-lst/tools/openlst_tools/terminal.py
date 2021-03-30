@@ -134,6 +134,7 @@ class RadioTerminal(object):
         if self.raw:
             self.insert_msg(">", cmd)
         self.seqnum = (self.seqnum + 1) % (16**4)
+        # print(''.join('{:02X}'.format(a) for a in cmd))
         self.tx.send(cmd)
 
     def clear_line(self):
