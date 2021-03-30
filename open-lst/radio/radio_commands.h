@@ -22,20 +22,25 @@
 #include "telemetry.h"
 
 typedef enum {
-	radio_msg_reboot       = 0x12,
-	radio_msg_get_time     = 0x13,
-	radio_msg_set_time     = 0x14,
-	radio_msg_ranging      = 0x15,
-	radio_msg_ranging_ack  = 0x16,
-	radio_msg_get_telem    = 0x17,
-	radio_msg_telem        = 0x18,
-	radio_msg_get_callsign = 0x19,
-	radio_msg_set_callsign = 0x1a,
-	radio_msg_callsign     = 0x1b
+	radio_msg_reboot       		= 0x12,
+	radio_msg_get_time     		= 0x13,
+	radio_msg_set_time     		= 0x14,
+	radio_msg_ranging     		= 0x15,
+	radio_msg_ranging_ack 	 	= 0x16,
+	radio_msg_get_telem   	 	= 0x17,
+	radio_msg_telem       	 	= 0x18,
+	radio_msg_get_callsign	 	= 0x19,
+	radio_msg_set_callsign	 	= 0x1a,
+	radio_msg_callsign    	 	= 0x1b,
+	radio_test_set_led    	 	= 0x1c,
+	radio_test_clear_led  	 	= 0x1d,
+	radio_test_set_led_forward 	= 0x1e,
+	radio_test_clear_led_forward    = 0x1f,
 } radio_msg_no;
 
 #define RANGING_ACK_TYPE 1
 #define RANGING_ACK_VERSION 1
+#define CUSTOM_COMMANDS
 
 typedef struct {
 	uint8_t ack_type;

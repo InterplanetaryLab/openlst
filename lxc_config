@@ -1,0 +1,33 @@
+# Template used to create this container: /usr/share/lxc/templates/lxc-download
+# Parameters passed to the template:
+# For additional config options, please look at lxc.container.conf(5)
+
+# Uncomment the following line to support nesting containers:
+#lxc.include = /usr/share/lxc/config/nesting.conf
+# (Be aware this has security implications)
+
+
+# Distribution configuration
+lxc.include = /usr/share/lxc/config/common.conf
+lxc.arch = linux64
+
+# Container specific configuration
+lxc.rootfs.path = dir:/var/lib/lxc/openlst/rootfs
+lxc.uts.name = openlst
+
+# Network configuration
+lxc.net.0.type = veth
+lxc.net.0.link = lxcbr0
+lxc.net.0.flags = up
+lxc.net.0.hwaddr = 00:16:3e:bd:3c:9d
+
+lxc.cgroup.devices.allow = c 189:* rwm lxc.cgroup.devices.allow = c 7:* rwm 
+lxc.cgroup.devices.allow = c 188:* rwm lxc.cgroup.devices.allow = c 0:* rwm 
+lxc.cgroup.devices.allow = c 1:* rwm lxc.mount.entry = /dev/bus/usb dev/bus/usb none 
+bind,optional,create=dir lxc.mount.entry = /dev/ttyUSB0 dev/ttyUSB0 none 
+bind,optional,create=file lxc.mount.entry = /dev/ttyUSB1 dev/ttyUSB1 none 
+bind,optional,create=file
+
+
+
+

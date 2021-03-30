@@ -25,7 +25,73 @@
 #include "watchdog.h"
 
 #ifdef CUSTOM_COMMANDS
-uint8_t custom_commands(const __xdata command_t *cmd, uint8_t len, __xdata command_t *reply);
+uint8_t custom_commands(const __xdata command_t *cmd, uint8_t len, __xdata command_t *reply)
+{
+	uint8_t reply_length;
+	#if RADIO_RANGING_RESPONDER == 1
+	uint8_t old_tx_mode;
+	#endif
+	__xdata msg_data_t *cmd_data;
+	__xdata msg_data_t *reply_data;
+
+	__xdata radio_callsign_t *olst_callsign;
+	__xdata radio_callsign_t olst_callsign_rx;
+
+	// Initialize the reply header
+	reply->header.hwid = hwid_flash;
+	reply->header.seqnum = cmd->header.seqnum;
+	reply->header.system = MSG_TYPE_RADIO_OUT;
+
+	cmd_data = (__xdata msg_data_t *) cmd->data;
+	reply_data = (__xdata msg_data_t *) reply->data;
+
+	// Fallthrough case - use "nack" as the default response
+	reply->header.command = common_msg_nack;
+	reply_length = sizeof(reply->header);
+	switch (cmd->header.command)
+	{
+		// just turns on the local boards D2 led
+		case radio_test_set_led:
+			reply->header.command = common_msg_ack;
+			board_led_set((__bit) 1);
+			break;
+		// just turns off the local boards D2 led
+		case radio_test_clear_led:
+			reply->header.command = common_msg_ack;
+			board_led_set((__bit) 0);
+			break;
+		// attempts to forward the clear_led command over the radio interface (FUNCTIONAL)
+		case radio_test_set_led_forward:
+			reply->header.command = radio_test_set_led;
+			reply->header.hwid = (__xdata uint8_t ) cmd->data[0]; // sets the target based upon the input HWID (comes from the radio_terminal argument)
+			//reply_length += sizeof(reply_data->ranging_ack);			
+			old_tx_mode = radio_mode_tx;
+			radio_mode_tx = RADIO_MODE_DEFAULT_TX;
+			radio_send_packet(reply, reply_length, RF_TIMING_PRECISE, 0);
+			radio_mode_tx = old_tx_mode;
+
+			reply->header.command = common_msg_ack;
+
+		break;
+		// attempts to forward the clear_led command over the radio interface (FUNCTIONAL)
+		case radio_test_clear_led_forward:
+			reply->header.command = radio_test_clear_led;
+			reply->header.hwid = (__xdata uint8_t ) cmd->data[0]; // sets the target based upon the input HWID (comes from the radio_terminal argument)
+			reply_length += sizeof(reply_data->ranging_ack);			
+			old_tx_mode = radio_mode_tx;
+			radio_mode_tx = RADIO_MODE_DEFAULT_TX;
+			radio_send_packet(reply, reply_length, RF_TIMING_PRECISE, 0);
+			radio_mode_tx = old_tx_mode;
+
+			reply->header.command = common_msg_ack;
+
+		break;
+		default:
+			reply->header.command = common_msg_nack;
+			break;
+	}
+	return reply_length;
+}
 #endif
 
 uint8_t commands_handle_command(const __xdata command_t *cmd, uint8_t len, __xdata command_t *reply) {
@@ -142,7 +208,6 @@ uint8_t commands_handle_command(const __xdata command_t *cmd, uint8_t len, __xda
 			reply_length = 0;
 		break;
 		#endif
-
 		#ifdef CUSTOM_COMMANDS
 		default:
 			reply_length = custom_commands(cmd, len, reply);

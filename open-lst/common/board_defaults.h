@@ -147,6 +147,9 @@
 // Forward messages from the UART out the RF port
 // by default in the application but not
 // in the bootloader
+//
+#define FORWARD_MESSAGES_UART0 1
+/*
 #ifndef FORWARD_MESSAGES_UART0
 #ifdef BOOTLOADER
 #define FORWARD_MESSAGES_UART0 0
@@ -154,7 +157,7 @@
 #define FORWARD_MESSAGES_UART0 1
 #endif
 #endif
-
+*/
 
 // Forward messages from the RF to the UART
 // by default in the application but not

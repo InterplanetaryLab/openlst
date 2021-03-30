@@ -43,6 +43,27 @@ static __xdata command_buffer_t reply;
 #endif
 
 #if UART0_ENABLED == 1
+
+//basically just forwards the uart directly over the radio. Bypasses most of the command structure
+void input_handle_uart0_rx_alt(void)
+{
+	uint8_t len;
+	uint8_t reply_len;
+	len = uart0_get_message(buffer.msg);
+	//do nothing if the length=0 aka nothing in the buffer
+	if (len == 0)
+	{
+		return;
+	}
+	else
+	{
+
+ 	// otherwise just forwarded it over rf
+	board_led_set((__bit) 1);
+	radio_send_packet(&buffer.cmd, len, RF_TIMING_NOW, 0);
+	}
+}
+
 void input_handle_uart0_rx(void) {
 	uint8_t len;
 	uint8_t reply_len;
@@ -83,6 +104,8 @@ void input_handle_uart1_rx(void) {
 	if (len == 0) { // no messages
 		return;
 	}
+
+	uart1_send_message(buffer.msg,len);
 
 	// See if this message is addressed to us,
 	// is a full message, and is targeted at the radio

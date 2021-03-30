@@ -1,0 +1,106 @@
+Assembly Notes:
+ - CC1110 chip is often fails to solder properly, so it is typically necessary to go back over with a fine solder tip and a fine solder (.4mm).
+
+Software Notes:
+ - It is possible to bypass the vagrant setup (though I have not had luck getting it working). (the guide at least specifies the possibility).
+	 - Currently the a simple screen is capable of reading the git sha update (i.e transmit git sha on start up, watchdog timer resets after 1 second, repeat).
+	 - However, their radio_terminal does not appear to be working.
+	 - Trying to use "radio_mux /dev/ttyUSB0" doesn't appear to fix the problem either (I have been running all utilies though with sudo privileges as it is easier to get running)
+
+Vagrant Notes:
+ - It is entirely possible that pip will be broken in your vagrant distribution.
+	- This is entirely due to the fact that the OpenLST repo using python2 instead of 3 which as of late pip has dropped all support for python2.
+ - pip install --upgrade "pip < 21.0"
+	- This command is useful to update to the latest pip version that still supports python2.
+	- Another thing that might be needed is uninstall pip2 via your package manager (probably aptitude) and delete a .local folder for pip than reinstall using your package manager and then use the above command to update it. This fixed my problem.
+
+I bypassed the vagrant setup for now:
+ - for fixing radio_mux, I just made my own script that doesn't utilize a lot of znq stuff. Not worth the hassle for the first test
+
+issuing commands:
+ - issue commands, use the radio_terminal (give it the proper uart, and hardware id), and start by using lst as the base.
+ "lst (command)". If you hit tab while having lst you should be given options for commands
+
+Bypassing most of the muxing of UART ports:
+ - More or less zynq is used to multiplex the two UART ports.
+ - However, it appears to not always work exactly correctly due to various udev stuff.
+ - To bypass this made a zynq.sh script in the tools folder for openlst that just runs the background radio_mux and specifies specifically the UART1 only. This works fine for initial testing but should be altered later on.
+ - Note only tested on Arch Linux, so this may not work for all distributions 
+
+
+Adding Custom Commands:
+ - So the process for adding custom commands is somewhat clumsy (at least if you want them accessible via the radio_terminal).
+ - There are more or less 2 locations that need to be edited to add a custom command (depending on the complexity).
+	- the python translator.py 
+		- Added your hexcode that corresponds to your command
+		- Add the option so that "lst (insert command)" works.
+	- /open-lst/radio/radio_commands.h
+		- Added the hexcode for your command
+	- /open-lst/radio/commands.c
+		- Actually flush out the command.
+
+ - You can setup the custom commands multiple ways so that they can be easily disabled with a macro but for now I just add my commands to the main switch statement in commands.c 
+ - Example command:
+	clear_led & set_led
+
+
+Adding Radio Communication Commands:
+	- So these notes I haven't fully confirmed but so far a basic radio command structure contains these following lines (grabbed from radio_msg_ranging command).
+	- radio_send_packet(reply, reply_length,RF_TIMING_PRECISE);
+
+Fixing Some dependencies:
+ - Since the OpenLST code base relies on Python2 which just got deprecated (Sigh). There are some libraries that need to be updated.
+ 	- One requirement is the pycrypto which needs to be change to pycryptodome in the setup.py file.
+ - Some other changes are needed to get pip2 installed as well.
+
+
+
+Adding UART forwarding:
+ - So by default the OpenLST radio forwarding is a bit weird. Basically to get it working you have to modify some of the min sizes for uart commands and change how it interprets forwarding.
+
+HWID Setting:
+ - Note that the HWID can be changed whenever you upload a new bootloader to the device (and the firmware also has to match this new hwid).
+ - Some of the example radio push commands have hard coded hwid that will need to be changed eventually. But as of now it will suffice.
+ - Test Primary Transmitter has HWID=0x1 : Test Primary Receiver has HWID=0x2
+
+
+PACKET STRUCTURE:
+ - To improve understanding of the fairly simple radio protocol that is mostly being limited by the too many type defs and structs (aka don't bother typedefing a variable that already has a descriptive name as that actually makes it more difficult to understand).
+
+
+
+
+- When issuing a radio send or receive (aka "radio_send_packet" or "radio_get_message" there are a couple of crucial variables to be made note of. *cmd or command_t, and the length of the command. 
+ - command_t:
+   - This a struct that contains several layers deep of structs and typedefs so the below diagram breaks it down:
+	- command_t
+		- command_header_t header
+			- hwid_t (uint16_t) (target radio's hwid)
+			- seqnum (uint16_t) (counter that helps align commands, overflows fine)
+			- system (uint8_t) (how the radio should interpret the command (i.e if you want it stripped down and converted to a hexadecimal command to be interpreted in your commands.c you would set it to use lst or the translator)
+			- radio_msg_no_t (uint8_t) the actual command hexcode (i.e 0x12 would equate to the enum mapping of radio_msg_reboot aka reboot the radio)
+		
+  		- data (uint8_t *) with size of (ESP_MAX_PAYLOAD(aka 251)-sizeof(command_header_t) basically the misc data byte that can be used but by default gets parsed to msg_data_t (total size should be around 211 bytes)
+ - msg_data_t
+    - This a struct that is commonly used with interpreting the data section of command_t
+	- msg_data_t
+		- timespec_t (struct) for measuring time
+			- seconds (uint32_t)
+			- nanoseconds (uint32_t)
+		- radio_ranging_act (struct)
+			- 
+Experimentally derived transmission:
+ - since sometimes it is a bit easier to derive the packet structure experimentally, this the example packet that I was able to sniff (using interceptty) and get a basic structure as well as replicate the command externally without using their python tools.
+
+Break down (in progress):
+ example for transmitting commands without their python terminal
+ breakdown of bytes Length of a transmission (experimentally derived) is 9 bytes.
+ 0x22 = lst command (basically standard prefix to a sending a command)
+ 0x69 = unknown
+ 0x06 = ack
+ 0xff = empty (meant for internal data that should be passed through)
+ 0xff = empty (meant for internal data that should be passed through)
+ 0x34 = transmission counting variable (should be manually incremented with each command that is sent
+ 0xa0 = unknown
+ 0x01 = specifies that this command is meant for the radio (could use other declarations which then can be parsed differently using the input_handler
+ 0x1c = command so in my case sending the set_led command

@@ -89,9 +89,9 @@ void main(void) {
 	while (1) {
 		WATCHDOG_CLEAR;
 		schedule_handle_events();
+		//input_handle_uart0_rx_alt();
 		input_handle_uart0_rx();
 		input_handle_uart1_rx();
 		input_handle_rf_rx();
-
 	}
 }
