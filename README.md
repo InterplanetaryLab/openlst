@@ -1,3 +1,24 @@
+# Interplanetary Initative Fork of the OpenLST Software Repo
+ This fork is mostly identical with exception to a couple of changes.
+ 
+ Python2 was deprecated in early 2020 so all of the python tools have been upgrade to 3 using the 2to3 upgrader (not everything has been verified yet).
+ 
+ Files changed in Upgrade:
+ - commands.py
+ - get_telem.py
+ - intel_hex.py
+ - radio_cmd.py
+ - radio_mux.py
+ - terminal.py
+ - time_sync.py
+ - translator.py
+
+Additionally, some test zmq scripts were made as the service for running the zmq backend often did not work.
+ - /open-lst/tools/zmq0.sh
+ - /open-lst/tools/zmq1.sh
+
+ The Vagrant has not been updated, so it is highly recommended that you make your own container. (note it will be updated at somepoint).
+
 # OpenLST Radio
 
 OpenLST is an open source, proven radio design for communicating with remote
