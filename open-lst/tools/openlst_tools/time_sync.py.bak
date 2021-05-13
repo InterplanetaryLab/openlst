@@ -58,7 +58,7 @@ def main():
                 nanoseconds=dt.microseconds * 1000),
             timeout=0.5
         )
-    print(resp)
+    print resp
 
 if __name__ == '__main__':
     main()

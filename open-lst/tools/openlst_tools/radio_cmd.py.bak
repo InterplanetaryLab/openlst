@@ -17,12 +17,9 @@
 import os
 import argparse
 import logging
-from datetime import datetime
 from .commands import get_handler
 from .arguments import hwid_type
 from .radio_mux import UART1_RX_SOCKET, UART1_TX_SOCKET
-
-J2000 = datetime(2000, 1, 1, 11, 58, 55, 816000)
 
 
 def main():
@@ -41,6 +38,7 @@ def main():
         '-i', '--hwid',
         type=hwid_type,
         help="The HWID of the satellite or ground radio")
+    parser.add_argument("command")
 
     args = parser.parse_args()
 
@@ -49,16 +47,8 @@ def main():
     log.setLevel(logging.DEBUG)
 
     con = get_handler(args.hwid, args.rx_path, args.tx_path)
-    resp = None
-    while not resp:
-        dt = datetime.utcnow() - J2000
-        resp = con.send_cmd_once(
-            "lst set_time {seconds:d} {nanoseconds:d}".format(
-                seconds=int(dt.total_seconds()),
-                nanoseconds=dt.microseconds * 1000),
-            timeout=0.5
-        )
-    print(resp)
+    resp = con.send_cmd(args.command)
+    print resp
 
 if __name__ == '__main__':
     main()

@@ -79,9 +79,9 @@ def main():
 
     con = get_handler(args.hwid, args.rx_path, args.tx_path)
     resp = con.send_cmd("lst get_telem")
-    print resp
+    print(resp)
     for field, val in zip(TELEM_FIELDS, resp.split()[2:]):
-        print field, val
+        print(field, val)
 
 if __name__ == '__main__':
     main()

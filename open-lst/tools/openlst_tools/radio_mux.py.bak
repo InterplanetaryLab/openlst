@@ -24,7 +24,7 @@ import signal
 import zmq
 from binascii import hexlify
 from threading import Thread, Event, Lock
-from queue import Queue
+from Queue import Queue
 
 ESP_START_BYTE_0 = '\x22'
 ESP_START_BYTE_1 = '\x69'
@@ -188,7 +188,7 @@ def main():
         rtscts=False,
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE)
-    print(serial_port)
+    print serial_port
     zmq_poller = ZMQPoller(
         tx_socket=args.tx_socket,
         rx_socket=args.rx_socket,

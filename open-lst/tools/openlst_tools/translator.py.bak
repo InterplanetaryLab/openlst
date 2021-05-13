@@ -194,16 +194,16 @@ class EnumArgument(Argument):
         self.length = 1
 
     def to_bytes(self, value):
-        if value in list(self.mapping.keys()):
+        if value in self.mapping.keys():
             return self.mapping[value]
-        elif value in list(self.mapping.values()):
+        elif value in self.mapping.values():
             return struct.pack(self.valuepack, value)
         else:
             raise ValueError("invalid value for enumeration '%s'" % value)
 
     def from_bytes(self, bstring):
         u = struct.unpack(self.valuepack, bstring[:self.length])
-        key = next(k for k, v in list(self.mapping.items()) if v == u)
+        key = next(k for k, v in self.mapping.items() if v == u)
         return key, bstring[self.length:]
 
 

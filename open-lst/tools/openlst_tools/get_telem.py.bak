@@ -17,12 +17,41 @@
 import os
 import argparse
 import logging
-from datetime import datetime
 from .commands import get_handler
 from .arguments import hwid_type
 from .radio_mux import UART1_RX_SOCKET, UART1_TX_SOCKET
 
-J2000 = datetime(2000, 1, 1, 11, 58, 55, 816000)
+TELEM_FIELDS = (
+    "reserved",
+    "uptime",
+    "uart0_rx_count",
+    "uart1_rx_count",
+    "rx_mode",
+    "tx_mode",
+    "adc0",
+    "adc1",
+    "adc2",
+    "adc3",
+    "adc4",
+    "adc5",
+    "adc6",
+    "adc7",
+    "adc8",
+    "adc9",
+    "last_rssi",
+    "last_lqi",
+    "last_freqest",
+    "packets_sent",
+    "cs_count",
+    "packets_good",
+    "packets_rejected_checksum",
+    "packets_rejected_reserved",
+    "packets_rejected_other",
+    "reserved0",
+    "reserved1",
+    "custom0",
+    "custom1",
+)
 
 
 def main():
@@ -49,16 +78,10 @@ def main():
     log.setLevel(logging.DEBUG)
 
     con = get_handler(args.hwid, args.rx_path, args.tx_path)
-    resp = None
-    while not resp:
-        dt = datetime.utcnow() - J2000
-        resp = con.send_cmd_once(
-            "lst set_time {seconds:d} {nanoseconds:d}".format(
-                seconds=int(dt.total_seconds()),
-                nanoseconds=dt.microseconds * 1000),
-            timeout=0.5
-        )
-    print(resp)
+    resp = con.send_cmd("lst get_telem")
+    print resp
+    for field, val in zip(TELEM_FIELDS, resp.split()[2:]):
+        print field, val
 
 if __name__ == '__main__':
     main()

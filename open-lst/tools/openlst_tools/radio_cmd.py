@@ -48,7 +48,7 @@ def main():
 
     con = get_handler(args.hwid, args.rx_path, args.tx_path)
     resp = con.send_cmd(args.command)
-    print resp
+    print(resp)
 
 if __name__ == '__main__':
     main()

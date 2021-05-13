@@ -18,7 +18,7 @@ import abc
 import time
 import logging
 from threading import Thread, Lock
-from queue import Queue, Empty
+from Queue import Queue, Empty
 from .translator import Translator
 from .radio_mux import DEFAULT_RX_SOCKET, DEFAULT_TX_SOCKET
 
@@ -48,9 +48,11 @@ class ResponseError(Exception):
     pass
 
 
-class CommandHandler(object, metaclass=abc.ABCMeta):
+class CommandHandler(object):
+    __metaclass__ = abc.ABCMeta
+
     def __init__(self, hwid):
-        if isinstance(hwid, str):
+        if isinstance(hwid, basestring):
             self.hwid = int(hwid, 16)
         else:
             self.hwid = hwid
@@ -166,7 +168,7 @@ class SerialListener(Thread):
         self.serial_lock = Lock()
         self.messages = Queue()
         self.parser = esp_parser()
-        next(self.parser)
+        self.parser.next()
 
     def update(self):
         with self.serial_lock:
@@ -236,7 +238,7 @@ class ZMQCommandHandler(CommandHandler):
 
     def poll_message(self, timeout):
         msgs = dict(self.poller.poll(timeout * 1000))
-        for sock, msg in msgs.items():
+        for sock, msg in msgs.iteritems():
             if sock == self.rx:
                 return self.rx.recv()
         return None

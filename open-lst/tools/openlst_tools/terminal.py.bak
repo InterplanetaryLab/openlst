@@ -14,7 +14,7 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
+from __future__ import print_function
 import argparse
 import zmq
 from blessed import Terminal
@@ -88,7 +88,7 @@ class RadioTerminal(object):
         self._connect_zmq()
         while self.running:
             msgs = dict(self.poller.poll(50))
-            for sock, msg in msgs.items():
+            for sock, msg in msgs.iteritems():
                 if sock == self.rx:
                     msg = self.rx.recv()
                     self.insert_msg("<", self._process_zmq_msg(msg))
@@ -146,7 +146,7 @@ class RadioTerminal(object):
 
     def _input_loop(self):
         try:
-            self.user_buffer = input('> ')
+            self.user_buffer = raw_input('> ')
             self._command_preprocessor()
         except (KeyboardInterrupt, EOFError):
             if readline.get_line_buffer() != '':
@@ -229,7 +229,7 @@ def _pretty_list_print(l, width=80):
     nrow = len(l) / ncol
     lrow = len(l) - (nrow * ncol)
     pstr = "{{:<{nchar}}}".format(nchar=nchar) * ncol
-    pstr = "\n".join([pstr for i in range(nrow)])
+    pstr = "\n".join([pstr for i in xrange(nrow)])
     if lrow != 0:
         pstr += "\n" + "{{:<{nchar}}}".format(nchar=nchar) * lrow
     print(pstr.format(*l))
@@ -240,11 +240,11 @@ def _navigate_tree(cmd_list, tree):
         Last level should be a list                                 '''
     cmd = cmd_list.pop(0)
     if len(cmd_list) == 0:
-        flat_level = tree if type(tree) == list else list(tree.keys())
+        flat_level = tree if type(tree) == list else tree.keys()
         if cmd in flat_level:
             return [cmd]
         else:
-            return [k for k in flat_level if k.startswith(cmd)]
+            return filter(lambda k: k.startswith(cmd), flat_level)
     else:
         return _navigate_tree(cmd_list, tree[cmd])
 

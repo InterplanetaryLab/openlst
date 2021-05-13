@@ -28,7 +28,7 @@ def parse_hex_file(hex_data, mem_size=0x8000):
     It returns a 32KB bytearray with empty/unused bytes set to 0xFF
     (flash empty)
     """
-    outbuff = bytearray(0xff for _ in range(mem_size))
+    outbuff = bytearray(0xff for _ in xrange(mem_size))
     line_count = 0
     total_data = 0
     for line in hex_data.splitlines():
@@ -49,7 +49,7 @@ def parse_hex_file(hex_data, mem_size=0x8000):
         if record_type == 0:  # Data
             data = [
                 int(line[(9 + 2 * i):(9 + 2 * i + 2)], 16)
-                for i in range(byte_count)]
+                for i in xrange(byte_count)]
             checksum = int(
                 line[(9 + 2 * byte_count):(9 + 2 * byte_count + 2)],
                 16)
@@ -72,7 +72,7 @@ def parse_hex_file(hex_data, mem_size=0x8000):
 def dump_hex_file(data, line_size=32, skip_lines=True,
                   truncate_lines=False):
     lines = []
-    for addr in range(0, len(data), line_size):
+    for addr in xrange(0, len(data), line_size):
         line_data = data[addr:addr + line_size]
         if truncate_lines:
             line_data = line_data.rstrip('\xff')
