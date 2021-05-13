@@ -322,6 +322,7 @@ class Translator(object):
         rv = bytearray(pack('<HH', hwid, seqnum))
 
         tokens = s.split()
+        print(rv)
 
         if len(tokens) < 2:
             raise ValueError("command too short '%r'" % ' '.join(tokens))

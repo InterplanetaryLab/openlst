@@ -128,8 +128,9 @@ class RadioTerminal(object):
         try:
             cmd = self.trans.bytes_from_string(
                 self.hwid, self.seqnum, cmd)
-        except Exception:
+        except Exception as e:
             print("[ERROR] Invalid command: {}".format(self.user_buffer))
+            print(e)
             return
         if self.raw:
             self.insert_msg(">", cmd)

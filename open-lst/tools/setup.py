@@ -18,7 +18,7 @@ from setuptools import setup
 
 
 setup(name='openlst_tools',
-      version="1.0.0",
+      version="1.0.1",
       author='Planet Labs Inc.',
       author_email='hello@planet.com',
       description='Tools for communicating with OpenLST',
@@ -30,7 +30,6 @@ setup(name='openlst_tools',
           "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
           "Natural Language :: English",
           "Operating System :: POSIX :: Linux",
-          "Programming Language :: Python :: 2.7",
           "Programming Language :: Python :: 3",
           "Programming Language :: Python :: 3.0",
           "Programming Language :: Python :: 3.1",
