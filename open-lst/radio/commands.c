@@ -16,6 +16,7 @@
 
 #include "commands.h"
 #include "cc1110_regs.h"
+#include <cc1110.h>
 #include "board_defaults.h"
 #include "hwid.h"
 #include "radio_commands.h"
@@ -30,6 +31,8 @@ uint8_t custom_commands(const __xdata command_t *cmd, uint8_t len, __xdata comma
 	uint8_t reply_length;
 	#if RADIO_RANGING_RESPONDER == 1
 	uint8_t old_tx_mode;
+
+	uint8_t freq_shift1;
 	#endif
 	__xdata msg_data_t *cmd_data;
 	__xdata msg_data_t *reply_data;
@@ -67,9 +70,15 @@ uint8_t custom_commands(const __xdata command_t *cmd, uint8_t len, __xdata comma
 			//reply_length += sizeof(reply_data->ranging_ack);			
 			old_tx_mode = radio_mode_tx;
 			radio_mode_tx = RADIO_MODE_DEFAULT_TX;
-			radio_send_packet(reply, reply_length, RF_TIMING_PRECISE, 0);
+			freq_shift1 = (uint8_t) cmd->data[1];
+			reply->data[0] = (__xdata uint8_t) freq_shift1;
+
+			reply_length +=2;
+
+			radio_send_packet_cust_freq(reply, reply_length, RF_TIMING_PRECISE, 0, DEFAULT_RF_FREQ2,DEFAULT_RF_FREQ1,freq_shift1,1);
 			radio_mode_tx = old_tx_mode;
 
+			reply_length = sizeof(reply->header);
 			reply->header.command = common_msg_ack;
 
 		break;
@@ -80,7 +89,9 @@ uint8_t custom_commands(const __xdata command_t *cmd, uint8_t len, __xdata comma
 			reply_length += sizeof(reply_data->ranging_ack);			
 			old_tx_mode = radio_mode_tx;
 			radio_mode_tx = RADIO_MODE_DEFAULT_TX;
-			radio_send_packet(reply, reply_length, RF_TIMING_PRECISE, 0);
+			freq_shift1 = (uint8_t) cmd->data[1];
+
+			radio_send_packet_cust_freq(reply, reply_length, RF_TIMING_PRECISE, 0, DEFAULT_RF_FREQ2,DEFAULT_RF_FREQ1,freq_shift1,1);
 			radio_mode_tx = old_tx_mode;
 
 			reply->header.command = common_msg_ack;

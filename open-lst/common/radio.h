@@ -110,6 +110,10 @@ void radio_set_modes(uint8_t rx_mode, uint8_t tx_mode);
 uint8_t radio_get_message(__xdata command_t *cmd, uint8_t *uart_sel);
 void radio_init(void);
 void radio_listen(void);
+
+
+void radio_send_packet_cust_freq(const __xdata command_t* cmd, uint8_t len,
+                       __bit precise_timing, uint8_t uart_sel, uint8_t freq2,uint8_t freq1,uint8_t freq0, uint8_t freq_over);
 void radio_send_packet(const __xdata command_t* cmd, uint8_t len,
                        __bit precise_timing, uint8_t uart_sel);
 

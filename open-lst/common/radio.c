@@ -320,9 +320,10 @@ void radio_listen(void) {
 	RFST = RFST_SRX;
 }
 
-
-void radio_send_packet(const __xdata command_t* cmd, uint8_t len,
-                       __bit precise_timing, uint8_t uart_sel) {
+// custom packet sender that overrides the base frequency
+void radio_send_packet_cust_freq(const __xdata command_t* cmd, uint8_t len,
+                       __bit precise_timing, uint8_t uart_sel, uint8_t freq2,uint8_t freq1,uint8_t freq0, uint8_t freq_over)
+{
 	__xdata rf_message_footer_t *footer;
 	uint8_t rf_extras;
 	uint8_t rf_msg_len;
@@ -355,6 +356,12 @@ void radio_send_packet(const __xdata command_t* cmd, uint8_t len,
 	RFST = RFST_SIDLE;
 
 	board_apply_radio_settings(radio_mode_tx);
+	if (freq_over == 1)
+	{
+		FREQ2 = freq2;
+		FREQ1 = freq1;
+		FREQ0 = freq0;
+	}
 
 	// Abort any ongoing DMA transaction (RX or TX) on our channel
 	dma_abort(dma_channel_rf);
@@ -415,4 +422,10 @@ void radio_send_packet(const __xdata command_t* cmd, uint8_t len,
 
 	radio_listen();
 	radio_packets_sent++;
+}
+
+
+void radio_send_packet(const __xdata command_t* cmd, uint8_t len,
+                       __bit precise_timing, uint8_t uart_sel) {
+	radio_send_packet_cust_freq(cmd,len,precise_timing,uart_sel,0,0,0,0);
 }

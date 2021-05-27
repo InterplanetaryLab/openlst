@@ -195,6 +195,22 @@
 #define COMMAND_WATCHDOG_DELAY 45000
 #endif
 
+
+
+
+/* Default Frequency Settings
+ */
+#define DEFAULT_RF_FSCTRL1 0x06
+#define DEFAULT_RF_FSCTRL0 0x00
+#define DEFAULT_RF_FREQ2 0x10
+#define DEFAULT_RF_FREQ1 0x2F
+#define DEFAULT_RF_FREQ0 0x69
+
+//default RF configuration carrier freq w/o offset is 437000289.917
+//FREQ offset from FSCTRL1 of 
+//
+//
+
 // Overrideable defaults for simple RF channel customization:
 #ifndef RF_FSCTRL1
 #define RF_FSCTRL1 0x06
