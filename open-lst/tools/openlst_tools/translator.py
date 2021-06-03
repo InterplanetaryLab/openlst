@@ -216,8 +216,9 @@ class Command(object):
 
     def tokens_to_bytes(self, tokens):
         tokens = list(tokens)
+        print(tokens)
         rv = b""
-        rv += self.opcode
+        rv += self.opcode.encode()
         for i, arg in enumerate(self.args):
             optional = (len(self.args) - i <= self.optional_args)
             try:
@@ -322,15 +323,15 @@ class Translator(object):
         rv = bytearray(pack('<HH', hwid, seqnum))
 
         tokens = s.split()
-        print(rv)
 
         if len(tokens) < 2:
             raise ValueError("command too short '%r'" % ' '.join(tokens))
 
         if tokens[0] == 'lst':
-            rv += LST
+            rv.append(ord(LST))
         else:
             raise ValueError("don't know system '%r'" % s)
+        #CMD_STRING_MAP[tokens[1]].tokens_to_bytes(tokens[2:])
         rv.extend(CMD_STRING_MAP[tokens[1]].tokens_to_bytes(tokens[2:]))
 
         return rv
