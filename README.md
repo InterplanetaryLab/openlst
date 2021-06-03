@@ -19,6 +19,8 @@ Additionally, some test zmq scripts were made as the service for running the zmq
 
  The Vagrant has not been updated, so it is highly recommended that you make your own container. (note it will be updated at somepoint).
 
+ If you are looking for the update OpenLST-hw repo, see this repo: [Openlst-hw](https://github.com/InterplanetaryLab/openlst-hw)
+
 # OpenLST Radio
 
 OpenLST is an open source, proven radio design for communicating with remote

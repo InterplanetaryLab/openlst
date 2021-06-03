@@ -17,8 +17,7 @@
 
 #sudo apt-get update
 #sudo apt-get install --assume-yes python-dev python-pip
-pip3 install -e /home/revised-openlst/openlst/open-lst/tools
-
+pip3 install -e .
 # Install the radio services
 #sudo cp /home/vagrant/project/open-lst/tools/radio@.service /etc/systemd/system/radio@.service
 #sudo systemctl daemon-reload
