@@ -331,8 +331,9 @@ class Translator(object):
             rv.append(ord(LST))
         else:
             raise ValueError("don't know system '%r'" % s)
-        #CMD_STRING_MAP[tokens[1]].tokens_to_bytes(tokens[2:])
         rv.extend(CMD_STRING_MAP[tokens[1]].tokens_to_bytes(tokens[2:]))
+
+        print(rv)
 
         return rv
 

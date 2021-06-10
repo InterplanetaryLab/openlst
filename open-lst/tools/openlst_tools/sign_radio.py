@@ -54,7 +54,7 @@ def main():
     cbc = cipher.encrypt(bytes(
         radio_app[FLASH_APP_START:FLASH_SIGNATURE_START]))
     cbcmac = cbc[-16:]
-    args.signature_file.write(hexlify(cbcmac))
+    args.signature_file.write(cbcmac.hex())
 
 
 if __name__ == '__main__':

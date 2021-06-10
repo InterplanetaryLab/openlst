@@ -13,6 +13,10 @@
  - time_sync.py
  - translator.py
 
+
+Files manually gone through and tested:
+ - radio_sign.py - in-progress
+
 Additionally, some test zmq scripts were made as the service for running the zmq backend often did not work.
  - /open-lst/tools/zmq0.sh
  - /open-lst/tools/zmq1.sh
