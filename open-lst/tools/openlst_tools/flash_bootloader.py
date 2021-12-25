@@ -139,17 +139,20 @@ def main():
     insert_application(bootloader)
     insert_signature(bootloader)
     insert_storage(bootloader)
-    with tempfile.NamedTemporaryFile(delete=False, suffix='.hex') as tf:
-        tf.write(dump_hex_file(bootloader))
-    cmd = [
-            "cc-tool",
-            "-f",  # Fast mode
-            "-e",  # Erase
-            "-v",  # Verify after write
-            "-l", LOCK_BITS,  # set lock bits
-            "-w", tf.name, # Write our file
-            ]
-    log.info("cc-tool command: %s", " ".join(cmd))
+   
+    with open('2.hex', 'w') as f:
+        f.write(dump_hex_file(bootloader))
+    #with tempfile.NamedTemporaryFile(delete=False, suffix='.hex') as tf:
+    #    tf.write(dump_hex_file(bootloader))
+    #cmd = [
+    #        "cc-tool",
+    #        "-f",  # Fast mode
+    #        "-e",  # Erase
+    #        "-v",  # Verify after write
+    #        "-l", LOCK_BITS,  # set lock bits
+    #        "-w", tf.name, # Write our file
+    #        ]
+    #log.info("cc-tool command: %s", " ".join(cmd))
     try:
         subprocess.check_call(cmd)
     finally:
