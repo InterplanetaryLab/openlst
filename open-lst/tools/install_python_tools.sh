@@ -21,6 +21,6 @@
 sudo pip install -e .
 
 # Install the radio services
-sudo cp /home/vagrant/project/open-lst/tools/radio@.service /etc/systemd/system/radio@.service
-sudo systemctl daemon-reload
-sudo systemctl enable radio@0 radio@1
+#sudo cp /home/vagrant/project/open-lst/tools/radio@.service /etc/systemd/system/radio@.service
+#sudo systemctl daemon-reload
+#sudo systemctl enable radio@0 radio@1
