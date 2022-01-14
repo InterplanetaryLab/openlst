@@ -91,9 +91,9 @@ def dump_hex_file(data, line_size=32, skip_lines=True,
                 length=length,
                 address=addr,
                 cmd=0,  # Data row
-                data=hexlify(line_data).upper(),
+                data=hexlify(line_data).upper().decode(),
                 checksum=checksum))
     # EOF marker
     lines.append(":00000001FF")
-
-    return "\n".join(lines)
+    output = "\n".join(lines)
+    return output

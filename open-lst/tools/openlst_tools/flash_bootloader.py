@@ -140,7 +140,9 @@ def main():
     insert_signature(bootloader)
     insert_storage(bootloader)
     with tempfile.NamedTemporaryFile(delete=False, suffix='.hex') as tf:
-        tf.write(dump_hex_file(bootloader))
+        temp_boot = dump_hex_file(bootloader).encode('UTF-8')
+        print(type(temp_boot))
+        tf.write(temp_boot)
     cmd = [
             "cc-tool",
             "-f",  # Fast mode
