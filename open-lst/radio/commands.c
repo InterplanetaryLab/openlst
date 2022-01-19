@@ -16,6 +16,7 @@
 
 #include "commands.h"
 #include "cc1110_regs.h"
+#include "cc1110.h"
 #include "board_defaults.h"
 #include "hwid.h"
 #include "radio_commands.h"
@@ -55,11 +56,17 @@ uint8_t commands_handle_command(const __xdata command_t *cmd, uint8_t len, __xda
 		case common_msg_ack:
 			reply->header.command = common_msg_ack;
 			break;
-
 		case common_msg_nack:
 			reply->header.command = common_msg_nack;
 			break;
-
+		case radio_test_set_led:
+			board_led_set((__bit) 1);
+			reply->header.command = common_msg_ack;
+			break;
+		case radio_test_clear_led:
+			board_led_set((__bit) 0);
+			reply->header.command = common_msg_ack;
+			break;
 		case radio_msg_reboot:
 			// Postpone reboot by specified number of seconds
 			if (len < sizeof(cmd->header) + sizeof(cmd_data->reboot_postpone)) {
