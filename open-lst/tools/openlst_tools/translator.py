@@ -39,6 +39,8 @@ BOOTLOADER_ERASE = '\x0c'
 BOOTLOADER_WRITE_PAGE = '\x02'
 BOOTLOADER_ACK = '\x01'
 BOOTLOADER_NACK = '\x0f'
+SET_LED = '\x1c'
+CLEAR_LED = '\x1d'
 ASCII = '\x11'
 AES_KEY_SIZE = 16
 
@@ -272,6 +274,8 @@ COMMANDS = [
     Command("callsign", CALLSIGN,
             StringArgument("callsign")),
     Command("get_telem", GET_TELEM),
+    Command("set_led", SET_LED),
+    Command("clear_led", CLEAR_LED),
     Command("telem", TELEM,
             UInt8Argument("reserved"),
             UInt32Argument("uptime"),
